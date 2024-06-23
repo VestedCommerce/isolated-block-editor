@@ -50,24 +50,19 @@
 		<p>The textarea can be converted into a Gutenberg editor. Any existing content will be converted into blocks. Multiple editors can be added, with a seperate edit history for each.</p>
 
 		<div class="editors">
-			<div class="editor-container cloner">
-				<p>
-					<button onClick="toggleEditor( this );">Toggle Gutenberg</button>
-				</p>
-				<textarea rows="10"></textarea>
-			</div>
 			<div class="editor-container">
 				<p>
 					<button onClick="toggleEditor( this );">Toggle Gutenberg</button>
 				</p>
-				<textarea rows="10"></textarea>
+				<textarea id="html" rows="10"></textarea>
+				<textarea id="json" rows="10"></textarea>
 			</div>
 		</div>
-
-		<button class="add-another" onClick="addEditor()">Add another editor</button>
 	</body>
 
 	<script>
+		const textarea = document.getElementById('html');
+		wp.attachEditor( textarea );
 		function toggleEditor( button ) {
 			const textarea = button.parentNode.parentNode.querySelector( 'textarea' );
 
@@ -76,15 +71,6 @@
 			} else {
 				wp.attachEditor( textarea );
 			}
-		}
-
-		function addEditor() {
-			const editor = document.querySelector( '.cloner' );
-			const clone = editor.cloneNode( true );
-
-			clone.classList.remove( 'cloner' );
-
-			editor.parentNode.appendChild( clone );
 		}
 	</script>
 </html>
