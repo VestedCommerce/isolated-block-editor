@@ -9,7 +9,11 @@ import { createRoot, unmountComponentAtNode } from '@wordpress/element';
  */
 
 import './style.scss';
-import IsolatedBlockEditor from '../index';
+import { Button, DropdownMenu } from '@wordpress/components';
+import { desktop, fullscreen } from '@wordpress/icons';
+import IsolatedBlockEditor, { EditorLoaded, DocumentSection, ToolbarSlot } from '../index';
+import {parse} from '@wordpress/block-serialization-spec-parser';
+import { dispatch } from '@wordpress/data';
 
 /** @typedef {import('../index').BlockEditorSettings} BlockEditorSettings */
 
@@ -19,8 +23,77 @@ import IsolatedBlockEditor from '../index';
  * @type BlockEditorSettings
  */
 const settings = {
+	// editor: {
+	// 	allowedBlockTypes:{
+	// 		x
+	// 	}
+	// },
 	iso: {
-		moreMenu: false,
+		moreMenu: {
+			editor: true,
+			fullscreen: true,
+			preview: true,
+			topToolbar: true,
+		},
+		toolbar: {
+			undo: true,
+			inserter: true,
+			inspector: true,
+			navigation: true,
+			documentInspector: true,
+		},
+		sidebar:{
+			inspector:true,
+		},
+		footer:true,
+		header:true,
+		blocks:{
+			allowBlocks:[],
+			disallowBlocks: [
+				'core/embed',
+				'core/freeform',
+				'core/shortcode',
+				'core/tag-cloud',
+				'core/block',
+				'core/rss',
+				'core/search',
+				'core/calendar',
+				'core/categories',
+				'core/more',
+				'core/nextpage',
+
+				'core/term-description',
+
+				'core/site-logo',
+				'core/site-tagline',
+				'core/site-title',
+
+				'core/archives',
+				'core/loginout',
+
+				'core/comment-template',
+				'core/comments',
+				'core/latest-comments',
+
+				'core/post-author',
+				'core/latest-posts',
+				'core/post-author-biography',
+				'core/post-author-name',
+				'core/post-comment',
+				'core/post-comments-count',
+				'core/post-comments-form',
+				'core/post-comments-link',
+				'core/post-content',
+				'core/post-date',
+				'core/post-excerpt',
+				'core/post-featured-image',
+				'core/post-navigation-link',
+				'core/post-template',
+				'core/post-terms',
+				'core/post-time-to-read',
+				'core/post-title'
+			]
+		}
 	},
 };
 
@@ -31,6 +104,9 @@ const settings = {
  * @param {HTMLTextAreaElement} textarea Textarea node
  */
 function saveBlocks( content, textarea ) {
+	let jsonTextrea = document.getElementById('json')
+	// @ts-ignore
+	jsonTextrea.value = JSON.stringify(parse(content))
 	textarea.value = content;
 }
 
@@ -82,10 +158,38 @@ function attachEditor( textarea, userSettings = {} ) {
 			onLoad={ ( parser, rawHandler ) => onLoad( textarea.value, parser, rawHandler ) }
 			onSaveContent={ ( content ) => saveBlocks( content, textarea ) }
 			onError={ () => document.location.reload() }
-		></IsolatedBlockEditor>
+		>
+			<EditorLoaded
+				onLoaded={() => { console.log('🚀 ~ LOADED') }}
+				onLoading={() => { console.log('🚀 ~ LOADING') }}
+			/>
+			<DocumentSection>Extra Information</DocumentSection>
+			<ToolbarSlot>
+				<DropdownMenu
+					controls={[
+						{
+							onClick: function noRefCheck(){},
+							title: 'First Menu Item Label'
+						},
+						{
+							onClick: function noRefCheck(){},
+							title: 'Second Menu Item Label'
+						}
+					]}
+					icon={desktop}
+					label="Select a direction."
+					onToggle={function noRefCheck(){}}
+				/>
+				<Button onClick={fullscreenMode} icon={fullscreen}/>
+			</ToolbarSlot>
+		</IsolatedBlockEditor>
 	);
 }
 
+function fullscreenMode(){
+	// @ts-ignore
+	dispatch( 'core/edit-post').toggleFeature( 'fullscreenMode' )
+}
 /**
  * Remove IsolatedBlockEditor from a textarea node
  *
