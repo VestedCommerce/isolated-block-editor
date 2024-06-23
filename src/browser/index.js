@@ -23,27 +23,21 @@ import { dispatch } from '@wordpress/data';
  * @type BlockEditorSettings
  */
 const settings = {
-	// editor: {
-	// 	allowedBlockTypes:{
-	// 		x
-	// 	}
-	// },
 	iso: {
 		moreMenu: {
 			editor: true,
 			fullscreen: true,
-			preview: true,
-			topToolbar: true,
 		},
 		toolbar: {
 			undo: true,
 			inserter: true,
 			inspector: true,
 			navigation: true,
-			documentInspector: true,
+			selectorTool: true,
 		},
 		sidebar:{
-			inspector:true,
+			inspector: true,
+			inserter: true,
 		},
 		footer:true,
 		header:true,
